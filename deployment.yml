@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-backup-and-upload
+spec:
+  template:
+    spec:
+      containers:
+      - name: django-backup-and-upload
+        image: docker.polylith.io/dumpdata-and-upload
+        env:
+        - name: POD_ID
+          value: "" # enter pod that contains django project you want to backup
+        - name: S3_BUCKET_NAME
+          value: "django-polylith-backups" # this bucket name is already created for the purpose of this backup job
+        - name: PROJECT_NAME
+          value: "" # enter a project name which is used to create an directory for your backup files
+        - name: DUMPDATA_EXCLUDE
+          value: "" # enter the models you want to exclude in the format: "--exclude auth.permission --exclude contenttypes"
+        - name: AWS_ACCESS_KEY_ID
+          value: "" # create credentials for django-backup user
+        - name: AWS_SECRET_ACCESS_KEY
+          value: "" # create credentials for django-backup user
+        volumeMounts:
+          - mountPath: /media-data
+            name: media-data
+      volumes:
+        - name: media-data
+          persistentVolumeClaim:
+            claimName: # here you need to enter the claim name, that holds the media data for the project
+      restartPolicy: Never
