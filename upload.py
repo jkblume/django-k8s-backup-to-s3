@@ -8,7 +8,6 @@ import shutil
 
 S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
 PROJECT_NAME = os.getenv("PROJECT_NAME")
-MEDIA_DIRECTORY = os.getenv("MEDIA_DIRECTORY")
 POD_ID = os.getenv("POD_ID")
 DUMPDATA_EXCLUDE = os.getenv("DUMPDATA_EXCLUDE")
 
