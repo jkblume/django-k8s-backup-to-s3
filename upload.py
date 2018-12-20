@@ -15,10 +15,15 @@ BACKUP_BASE_FILE_NAME = f'{PROJECT_NAME}/{time.strftime("%d-%m-%Y")}'
 
 # backup db with dumpdata and upload to s3
 cmd = f"kubectl exec -it {POD_ID} python manage.py dumpdata {DUMPDATA_EXCLUDE}"
+print(cmd)
 process = Popen(shlex.split(cmd), stdout=PIPE)
 (output, err) = process.communicate()
 print(output)
 exit_code = process.wait()
+if exit_code != 0:
+    exit(1)
+print(exit_code)
+print("Finished uploading .json")
 
 s3 = boto3.resource('s3')
 object = s3.Object(S3_BUCKET_NAME, f"{BACKUP_BASE_FILE_NAME}.json")
@@ -29,3 +34,4 @@ shutil.make_archive('media-data', 'zip', "/media-data")
 data = open('media-data.zip', 'rb')
 object = s3.Object(S3_BUCKET_NAME, f"{BACKUP_BASE_FILE_NAME}.zip")
 object.put(Body=data)
+print("Finished uploading .zip")
